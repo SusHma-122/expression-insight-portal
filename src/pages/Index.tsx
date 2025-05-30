@@ -1,12 +1,13 @@
 
 import React, { useState } from 'react';
-import { Search, Database, BarChart, Home, FileSearch, Box } from 'lucide-react';
+import { Search, Database, BarChart, Home, FileSearch, Box, Upload } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import Dashboard from '@/components/Dashboard';
 import GeneSearch from '@/components/GeneSearch';
 import DatasetInfo from '@/components/DatasetInfo';
+import FileUpload from '@/components/FileUpload';
 
 const datasets = [
   { id: 'GSE42872', title: 'Breast Cancer Expression', samples: 104, organism: 'Homo sapiens' },
@@ -25,6 +26,11 @@ const Index = () => {
   const [currentView, setCurrentView] = useState('home');
   const [selectedDataset, setSelectedDataset] = useState('');
 
+  const handleUploadSuccess = (datasetId: string) => {
+    setSelectedDataset(datasetId);
+    setCurrentView('dashboard');
+  };
+
   const renderContent = () => {
     switch (currentView) {
       case 'dashboard':
@@ -33,6 +39,8 @@ const Index = () => {
         return <GeneSearch selectedDataset={selectedDataset} />;
       case 'info':
         return <DatasetInfo selectedDataset={selectedDataset} />;
+      case 'upload':
+        return <FileUpload onUploadSuccess={handleUploadSuccess} />;
       default:
         return (
           <div className="space-y-8">
@@ -112,6 +120,18 @@ const Index = () => {
                     </Button>
                   </div>
                 )}
+
+                <div className="text-center py-4">
+                  <p className="text-sm text-gray-500 mb-3">Or upload your own dataset</p>
+                  <Button
+                    onClick={() => setCurrentView('upload')}
+                    variant="outline"
+                    className="flex items-center gap-2"
+                  >
+                    <Upload className="w-4 h-4" />
+                    Upload Custom Data
+                  </Button>
+                </div>
               </CardContent>
             </Card>
 
@@ -206,6 +226,14 @@ const Index = () => {
                   </Button>
                 </>
               )}
+              <Button
+                variant={currentView === 'upload' ? 'default' : 'ghost'}
+                onClick={() => setCurrentView('upload')}
+                className="flex items-center gap-2"
+              >
+                <Upload className="w-4 h-4" />
+                Upload
+              </Button>
             </div>
           </div>
         </div>
